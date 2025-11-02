@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - "main"
+  pull_request:
+
+jobs:
+  sozo-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: software-mansion/setup-scarb@v1
+        with:
+          scarb-version: "2.12.2"
+      - uses: asdf-vm/actions/setup@v4
+      - run: |
+          asdf plugin add sozo https://github.com/dojoengine/asdf-sozo.git
+          asdf install
+          sozo build
+          sozo test
+          if [[ `git status --porcelain` ]]; then
+            echo The git repo is dirty
+            echo "Make sure to run \"sozo build\" after changing Scarb.toml and commit Scarb.lock"
+            exit 1
+          fi

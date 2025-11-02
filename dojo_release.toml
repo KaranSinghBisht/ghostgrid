@@ -1,0 +1,25 @@
+# dojo_release.toml
+[world]
+name = "Ghostgrid"
+description = "Ghostgrid — spooky grid runs on Starknet."
+cover_uri = "file://assets/cover.png"
+icon_uri = "file://assets/icon.png"
+website = "https://github.com/your-org/ghostgrid"
+seed = "ghostgrid"
+
+[world.socials]
+x = "https://x.com/ohayo_dojo"
+discord = "https://discord.gg/FB2wR6uF"
+github = "https://github.com/your-org/ghostgrid"
+telegram = "https://t.me/dojoengine"
+
+[namespace]
+default = "ghostgrid"
+
+[env]
+# Leave RPC/world empty here; you’ll pass them via CLI on deploy.
+# rpc_url = ""
+# world_address = ""
+
+[writers]
+"ghostgrid" = ["ghostgrid-actions", "ghostgrid-sg_actions"]

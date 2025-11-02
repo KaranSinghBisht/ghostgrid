@@ -1,0 +1,27 @@
+# macOS
+.DS_Store
+
+# Node / Vite
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+.vite/
+**/.vite/
+*.log
+
+# Cairo / Scarb
+target/
+**/target/
+
+# Torii local DB
+torii.sqlite
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+
+# Env / tooling
+.env
+.env.*
+.vercel/
+.vscode/
