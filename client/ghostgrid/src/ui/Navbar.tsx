@@ -1,93 +1,77 @@
-import { Link, useLocation } from "react-router-dom";
+// src/ui/Navbar.tsx
+import React, { useState } from "react";
 import { useController } from "../hooks/useController";
-import React from "react";
 
-const THEME = {
-  text: "#e8e0c8",
-  accent: "#e6c17b",
-  edge: "#241c13",
-  btnBg: "#1a140e",
-  btnEdge: "#2b2116",
-};
+const THEME = { text: "#e8e0c8", muted: "#b9aa86", edge: "#241c13" };
 
-const BTN: React.CSSProperties = {
-  padding: "10px 14px",
-  borderRadius: 12,
-  border: `1px solid ${THEME.btnEdge}`,
-  background: "transparent",
-  color: THEME.text,
-  fontWeight: 800,
-  cursor: "pointer",
-  boxShadow: "inset 0 1px 0 rgba(255,255,255,.02), 0 1px 12px rgba(0,0,0,.25)",
-};
-const BTN_PRIMARY: React.CSSProperties = { ...BTN, background: THEME.btnBg };
-const BTN_DISABLED: React.CSSProperties = { ...BTN, opacity: 0.55, cursor: "not-allowed" };
+export default function Navbar() {
+  const { address, sessionActive, connect, startSession } = useController();
+  const [busy, setBusy] = useState(false);
 
-const CONTAINER: React.CSSProperties = {
-  width: "100%",         // full width
-  margin: 0,
-  paddingInline: 16,     // keep some side padding
-  boxSizing: "border-box",
-};
-
-function linkStyle(opacity = 1): React.CSSProperties {
-  return {
-    color: `rgba(232,224,200,${opacity})`,
-    textDecoration: "none",
-    padding: "8px 10px",
-    borderRadius: 10,
-    border: `1px solid transparent`,
-    transition: "transform .18s ease, border-color .18s ease",
-    userSelect: "none",
-    display: "inline-block",
-  };
-}
-
-export default function NavBar({ showHowLink = false }: { showHowLink?: boolean }) {
-  const { address, connecting, connect, disconnect } = useController();
   const short = (a?: string | null) => (a ? a.slice(0, 6) + "…" + a.slice(-4) : "");
-  const { pathname } = useLocation();
 
   return (
-    <header
+    <nav
       style={{
-        position: "sticky",
-        top: 0,
-        zIndex: 20,
-        backdropFilter: "blur(8px)",
-        background: "rgba(11,10,9,.55)",
+        width: "100%",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        padding: "12px 16px",
         borderBottom: `1px solid ${THEME.edge}`,
+        color: THEME.text,
+        background: "rgba(12,10,8,.6)",
+        backdropFilter: "blur(6px)",
+        boxSizing: "border-box",
       }}
     >
-      <div style={{ ...CONTAINER, display: "flex", alignItems: "center", justifyContent: "space-between", padding: 12 }}>
-        <Link to="/" style={{ textDecoration: "none", color: THEME.accent }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, fontWeight: 900 }}>
-            <span role="img" aria-label="pumpkin">🎃</span>
-            <span>Ghost Grid</span>
-          </div>
-        </Link>
+      <a href="/" style={{ fontWeight: 800, textDecoration: "none", color: THEME.text }}>
+        GHOST GRID
+      </a>
 
-        <nav className="gg-nav-links" style={{ display: "flex", gap: 14, alignItems: "center", opacity: 0.9 }}>
-          {showHowLink && pathname === "/" && <a href="#how" style={linkStyle()}>How it works</a>}
-          <Link to="/play" style={linkStyle()}>Play</Link>
-          <Link to="/leaderboard" style={linkStyle()}>Leaderboard</Link>
-          <a href="https://github.com/dojoengine/dojo-intro" target="_blank" rel="noreferrer" style={linkStyle()}>Dojo</a>
-          <a href="https://docs.cartridge.gg" target="_blank" rel="noreferrer" style={linkStyle()}>Cartridge</a>
-        </nav>
+      <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+        <a href="/play" style={link()}>Play</a>
+        <a href="/leaderboard" style={link()}>Leaderboard</a>
+        <a href="https://cartridge.gg" target="_blank" rel="noreferrer" style={link()}>Cartridge</a>
 
-        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-          {address ? (
-            <>
-              <span style={{ opacity: .9, fontWeight: 700, fontSize: 13 }}>{short(address)}</span>
-              <button style={BTN} onClick={disconnect}>Sign out</button>
-            </>
-          ) : (
-            <button style={connecting ? BTN_DISABLED : BTN_PRIMARY} disabled={connecting} onClick={connect}>
-              {connecting ? "Connecting…" : "Sign in"}
-            </button>
-          )}
-        </div>
+        <span style={{ color: THEME.muted, fontFamily: "ui-monospace, Menlo, monospace" }}>
+          {address ? short(address) : "Not connected"}
+        </span>
+
+        {!address && (
+          <button
+            style={btn()}
+            disabled={busy}
+            onClick={async () => { setBusy(true); try { await connect(); } finally { setBusy(false); } }}
+          >
+            {busy ? "Connecting…" : "Connect"}
+          </button>
+        )}
+
+        {address && !sessionActive && (
+          <button
+            style={btn(true)}
+            disabled={busy}
+            onClick={async () => { setBusy(true); try { await startSession(); } finally { setBusy(false); } }}
+          >
+            {busy ? "Starting…" : "Start Session"}
+          </button>
+        )}
       </div>
-    </header>
+    </nav>
   );
+}
+
+function link(): React.CSSProperties {
+  return { color: "#e8e0c8", textDecoration: "none", opacity: 0.9 };
+}
+function btn(primary = false): React.CSSProperties {
+  return {
+    padding: "8px 12px",
+    borderRadius: 10,
+    border: `1px solid #241c13`,
+    background: primary ? "#1b160f" : "transparent",
+    color: "#e8e0c8",
+    cursor: "pointer",
+  };
 }

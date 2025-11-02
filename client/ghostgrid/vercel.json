@@ -1,0 +1,7 @@
+{
+  "routes": [
+    { "src": "/torii/(.*)", "dest": "https://api.cartridge.gg/x/ghostgrid-torii/torii/$1" },
+    { "handle": "filesystem" },
+    { "src": "/.*", "dest": "/" }
+  ]
+}

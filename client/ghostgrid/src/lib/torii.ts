@@ -3,16 +3,39 @@
 const ENV: Record<string, any> =
   typeof import.meta !== "undefined" ? ((import.meta as any).env || {}) : {};
 
-export const TORII_URL: string =
-  (ENV.VITE_TORII_URL as string) ||
-  "https://api.cartridge.gg/x/ghostgrid/torii/graphql";
+const DEFAULT_TORII_BASE = "/torii";
+
+const sanitizeBase = (value: string | undefined | null): string => {
+  let base = (value ?? "").trim();
+  if (!base) return DEFAULT_TORII_BASE;
+
+  const stripTrailingSegment = (input: string, segment: string): string => {
+    const suffix = `/${segment}`;
+    if (input.endsWith(suffix)) return input.slice(0, -suffix.length);
+    return input;
+  };
+
+  base = base.replace(/\/+$/, "");
+  base = stripTrailingSegment(base, "graphql");
+  base = stripTrailingSegment(base, "sql");
+  base = base.replace(/\/+$/, "");
+
+  return base || DEFAULT_TORII_BASE;
+};
+
+export const TORII_BASE = sanitizeBase(ENV.VITE_TORII_URL as string);
+export const TORII_GRAPHQL = `${TORII_BASE}/graphql`;
+export const TORII_SQL = `${TORII_BASE}/sql`;
+
+// Backwards compatibility for older imports.
+export const TORII_URL = TORII_GRAPHQL;
 
 if (typeof window !== "undefined") {
-  (window as any).__TORII_URL__ = TORII_URL;
-  console.info("[GG] TORII_URL =", TORII_URL);
+  (window as any).__TORII_URL__ = TORII_GRAPHQL;
+  console.info("[GG] TORII_GRAPHQL =", TORII_GRAPHQL);
 }
 
-export async function pingTorii(url: string = TORII_URL) {
+export async function pingTorii(url: string = TORII_GRAPHQL) {
   const res = await fetch(url, {
     method: "POST",
     headers: { "content-type": "application/json" },
@@ -60,7 +83,7 @@ const toNum = (v: unknown, d = 0): number => {
 type GqlError = { message?: string };
 
 async function gql<T>(query: string, variables?: Record<string, unknown>): Promise<T> {
-  const res = await fetch(TORII_URL, {
+  const res = await fetch(TORII_GRAPHQL, {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ query, variables }),

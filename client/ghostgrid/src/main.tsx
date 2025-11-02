@@ -4,7 +4,7 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Home from "./Home";
 import App from "./App";
-import Leaderboard from "./LeaderBoard";
+import Leaderboard from "./Leaderboard";
 import "./index.css";
 
 createRoot(document.getElementById("root")!).render(
