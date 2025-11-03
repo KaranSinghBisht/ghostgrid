@@ -14,17 +14,22 @@ Wallet/session is via **Cartridge Controller** so you don’t have to sign every
 
 ---
 
-## Live Network (Sepolia)
+## Live Links
 
-This repo is configured for **Starknet Sepolia** by default.
+- **Production app:** https://ghostgrid.vercel.app/play
 
-- **World address:** `0x7e50e3d05225a874e027237145044ff1475c7ef11ea2d855c81654fcadfeb34`
+### Public Slots (Sepolia)
+- **Torii GraphQL (Slot):** `https://api.cartridge.gg/x/ghostgrid-torii/torii/graphql`
+- **Torii SQL (Slot):** `https://api.cartridge.gg/x/ghostgrid-torii/torii/sql`
 - **RPC:** `https://api.cartridge.gg/x/starknet/sepolia`
-
-> If you redeploy your own world, update the `.env` values accordingly.
 
 ---
 
+ ## Live Network (Sepolia)
+ 
+ This repo is configured for **Starknet Sepolia** by default.
+ 
+ ---
 ## Tech Stack
 
 - **Cairo/Dojo:** systems & models (`sozo`, `katana`)
